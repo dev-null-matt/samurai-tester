@@ -77,7 +77,8 @@ class App {
         }
 
         results.keySet().each {
-            println( "'${it.split(' - ')[0]},'${it.split(' - ')[1]},${results.get(it)}")
+            //println( "'${it.split(' - ')[0]},'${it.split(' - ')[1]},${results.get(it)}")
+            println("'$it',${results.get(it)}")
         }
     }
 

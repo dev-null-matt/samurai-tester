@@ -34,7 +34,7 @@ class CounterAndMonopolizeStrategy extends Strategy {
             case CATCH_YOUR_BREATH:
                 return attacker.flaws.contains(ArtfullyStrikeAction.OFF_BALANCE) ? [0,3,1,2] : [0,2,3,1]
             case DEFTLY_COUNTER:
-                return [0,2,1,3]
+                return [0,3,1,2]
             case MONOPOLIZE_OPENING:
                 return [0,1,2,3]
             case ARTFULLY_STRIKE:

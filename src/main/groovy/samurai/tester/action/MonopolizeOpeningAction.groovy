@@ -12,7 +12,7 @@ import static samurai.tester.samurai.Samurai.Statistics.DISCIPLINE
  *   (2) Remove any temporary flaw from yourself.
  *   (3) Remove any temporary trait from your surroundings.
  *   (4) Your opponent has disadvantage on their next action unless it is to attack you.
- *   After resolving the attack, remove the trait from your opponent that you took advantage of.
+ *   After resolving the attack, remove the trait from your opponent that you took advantage of (if it was a temporary trait).
  */
 class MonopolizeOpeningAction extends Action {
 

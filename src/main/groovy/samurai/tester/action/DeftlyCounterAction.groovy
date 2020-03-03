@@ -7,15 +7,15 @@ import static samurai.tester.samurai.Samurai.Statistics.SPEED
 
 /**
  * (R) Deftly Counter
- *   When you respond to an attack with precision and elegance, roll +speed.  On a hit, take one less harm from the
- *   attack (minimum 1).
- *   (1) You dodge out of the way of the attack, taking no harm from it.
+ *   When you respond to an attack with precision and elegance, roll +speed.
+ *   (1) You roll with the attack, taking one less harm from it.
  *   (2) You are unphased, if the attack would apply a flaw to you, it doesn't.
- *   (3) You swiftly counter attack, dealing 1 harm.
+ *   (3) You gain the advantage "perfect positioning".
  *   (4) You inflict the flaw “your technique is flawed” on your attacker.
  */
 class DeftlyCounterAction extends Action {
 
+    static final String PERFECT_POSITIONING = "perfect positioning"
     static final String FLAWED_TECHNIQUE = "your technique is flawed"
 
     DeftlyCounterAction() {
@@ -27,13 +27,12 @@ class DeftlyCounterAction extends Action {
         attacker.hasReacted = true
     }
 
-    // On a hit, take one less harm from the attack (minimum 1).
     @Override
     void baseEffect(Samurai attacker, Samurai defender) {
 
     }
 
-    // You dodge out of the way of the attack, taking no harm from it.
+    // You roll with the attack, taking one less harm from it.
     @Override
     void option1(Samurai attacker, Samurai defender) {
         // Take no damage from the attack reacted to
@@ -46,10 +45,10 @@ class DeftlyCounterAction extends Action {
         attacker.isUnphased = true
     }
 
-    // You swiftly counter attack, dealing 1 harm.
+    // You gain the advantage "perfect positioning".
     @Override
     void option3(Samurai attacker, Samurai defender) {
-        defender.harmBoxes -= 1
+        attacker.advantages.add(PERFECT_POSITIONING)
     }
 
     // You inflict the flaw “your technique is flawed” on your attacker.

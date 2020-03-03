@@ -7,6 +7,10 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static samurai.tester.samurai.Samurai.Statistics
+import static samurai.tester.samurai.Samurai.Statistics.DISCIPLINE
+import static samurai.tester.samurai.Samurai.Statistics.ENDURANCE
+import static samurai.tester.samurai.Samurai.Statistics.FORCE
+import static samurai.tester.samurai.Samurai.Statistics.SPEED
 
 class ActionSpec extends Specification {
 
@@ -24,13 +28,11 @@ class ActionSpec extends Specification {
 
     def setup() {
 
-        attacker = Mock(Samurai.class)
         attackerStrategy = Mock(Strategy.class)
-        attacker.strategy >> attackerStrategy
+        attacker = new Samurai([FORCE, ENDURANCE, SPEED, DISCIPLINE], attackerStrategy)
 
-        defender = Mock(Samurai.class)
         defenderStrategy = Mock(Strategy.class)
-        defender.strategy >> defenderStrategy
+        defender = new Samurai([FORCE, ENDURANCE, SPEED, DISCIPLINE], defenderStrategy)
     }
 
     def "basic contract met"() {
@@ -58,7 +60,7 @@ class ActionSpec extends Specification {
 
         given:
         def subject = new ActionSpy(null)
-        def reaction = new ActionSpy(null, null, subject)
+        def reaction = new DeftlyCounterAction()
         subject.child = reaction
         subject.canReact = canReact
 
@@ -70,13 +72,16 @@ class ActionSpec extends Specification {
 
         // Otherwise it all burns down if the strategies actually get called
         defender.advantages >> []
-        defender.strategy.getOptions(defender, attacker, null, _) >> [0, 1]
+        defender.strategy.getOptions(defender, attacker, _, _) >> [0, 1]
         defender.strategy.shouldInvokeAdvantage(defender, null) >> false
         defender.strategy.shouldInvokeFlaw(attacker, null) >> false
         attacker.flaws >> []
 
         and:
-        reaction.performInvoked == reacted
+        !attacker.hasActed
+        !attacker.hasReacted
+        !defender.hasActed
+        defender.hasReacted == reacted
 
         where:
         description   | actionOptions | canReact | reactionType                     | reacted
@@ -123,24 +128,24 @@ class ActionSpec extends Specification {
 
         given:
         def subject = new ActionSpy(null)
+        attacker.advantages = advantages
+        defender.flaws = flaws
 
         when:
         def result = subject.hasAdvantage(attacker, defender)
 
         then:
-        attacker.advantages >> ["foo"]
-        attacker.strategy.shouldInvokeAdvantage(_, _) >> attackerShouldInvokeFlaw
+        attacker.strategy.shouldInvokeAdvantage(_, _) >> attackerShouldInvokeAdvantage
         attacker.strategy.shouldInvokeFlaw(_, _) >> attackerShouldInvokeFlaw
-        defender.flaws >> ["bar"]
 
         and:
         result == hasAdvantage
 
         where:
-        description        | attackerShouldInvokeAdvantage | attackerShouldInvokeFlaw | hasAdvantage
-        'invoke neither'   | false                         | false                    | false
-        'invoke flaw'      | false                         | true                     | true
-        'invoke advantage' | true                          | true                     | true
+        description        | attackerShouldInvokeAdvantage | advantages    | attackerShouldInvokeFlaw | flaws         | hasAdvantage
+        'invoke neither'   | false                         | []            | false                    | []            | false
+        'invoke flaw'      | false                         | []            | true                     | Set.of("foo") | true
+        'invoke advantage' | true                          | Set.of("foo") | true                     | []            | true
     }
 
     @Unroll
@@ -224,8 +229,8 @@ class ActionSpec extends Specification {
         boolean preConditionsEnforced = false
         boolean baseEffectApplied = false
 
-        ActionSpy parent = null
-        ActionSpy child = null
+        Action parent = null
+        Action child = null
 
         ActionSpy(Statistics primaryStat, ActionSpy child = null, ActionSpy parent = null) {
             super(null, primaryStat, false, false)

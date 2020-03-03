@@ -7,8 +7,8 @@ import static samurai.tester.samurai.Samurai.Statistics.FORCE
 
 /**
  * Artfully Strike
- *   When you attack your opponent, roll +force.  On a hit, choose one, on a 10+, choose two.
- *   (1) Deal damage to your opponent equal to your force (to a minimum of 1).
+ *   When you attack your opponent, roll +force.  On a hit, deal 1 harm and choose one, on a 10+, choose two.
+ *   (1) Deal additional harm to your opponent equal to your force (to a minimum of 1).
  *   (2) You inflict the flaw “off balance” on your opponent.
  *   (3) Your opponent cannot Deftly Counter your attack.
  *   (4) You drive your opponent back from a location or away from an ally.
@@ -31,18 +31,15 @@ class ArtfullyStrikeAction extends Action {
 
     @Override
     void baseEffect(Samurai attacker, Samurai defender) {
-
+        if (!defender.isDodging) {
+            defender.harmBoxes -= 1
+        }
     }
 
     // Deal damage to your opponent equal to your force (to a minimum of 1).
     @Override
     void option1(Samurai attacker, Samurai defender) {
-        if (!defender.isDodging) {
-            //println("    $attacker.name dealt ${Math.max(attacker.force, 1)} harm to $defender.name")
-            defender.harmBoxes -= Math.max(attacker.force, 1)
-        } else {
-            //println("    $defender.name dodged all harm")
-        }
+        defender.harmBoxes -= Math.max(attacker.force, 1)
     }
 
     // You inflict the flaw “off balance” on your opponent.

@@ -37,7 +37,7 @@ class ChainCounterStrategy extends Strategy {
             case ARTFULLY_STRIKE:
                 return [0,1,2,3]
             case DEFTLY_COUNTER:
-                return [0,2,1,3]
+                return [0,1,2,3]
             case CATCH_YOUR_BREATH:
                 if (attacker.flaws.contains(ArtfullyStrikeAction.OFF_BALANCE))
                     return [0,3,2,1]

@@ -26,7 +26,7 @@ abstract class Action {
                 hasDisadvantage(attacker)
         )
 
-        List<Integer> actionOptions = attacker.strategy.getOptions(attacker, defender, actionType, optionCount)[0 .. optionCount-1]
+        List<Integer> actionOptions = optionCount == 0 ? [] : attacker.strategy.getOptions(attacker, defender, actionType, optionCount)[0 .. optionCount-1]
 
         enforcePreconditions(actionOptions, attacker, defender)
         handleReaction(defender, attacker, actionOptions)

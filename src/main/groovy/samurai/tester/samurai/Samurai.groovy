@@ -95,7 +95,8 @@ class Samurai {
 
     @Override
     String toString() {
-        return "$name - $strategy"
+        //return "$name - $strategy"
+        return "$strategy"
     }
 
     enum Statistics {
